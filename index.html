@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>WoR Server Checker</title>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    </head>
+    <body>
+        <div>
+            <p>
+            Latest Server: <span id="server"></span>
+            </p>
+            <p>
+            Server Opened: <span id="date"></span>
+            </p>
+        </div>
+        <script>
+            var date = 'No New Server',
+                lastServer = 398;
+
+            getLatestServer();
+
+            function getLatestServer() {
+                $.ajax({
+                    url: 'http://cors-proxy.htmldriven.com/?url=https%3A%2F%2Fsupport.ujoy.com%2Fen%2FIndex%2FgetServersByGameId%3Fgame_id%3D17',
+                    success: function(res) {
+                        if (res.body) {
+                            var data = JSON.parse(res.body);
+                            var servers = data.data;
+
+                            if (lastServer && lastServer != servers.length) {
+                                lastServer = servers.length;
+                                date = new Date();
+                            }
+
+                            $('#server').text(servers[0].REAL_NAME);
+                            $('#date').text(date.toString());
+                        }
+
+                        setTimeout(getLatestServer, 60000);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
