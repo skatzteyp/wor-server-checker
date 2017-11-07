@@ -21,20 +21,14 @@
         </script>
     </head>
     <body>
+        <h3>Server List</h3>
         <div id="list">
-            <p>
-            Latest Server: <span id="server"></span>
-            </p>
-            <p>
-            Server Opened: <span id="date"></span>
-            </p>
+          Retrieving list...
         </div>
         <script>
             var serverList;
             var dbRef = firebase.database();
             var serversRef = dbRef.ref('servers');
-            var date = 'No New Server',
-                lastServer = 398;
 
             serversRef.once('value', function(data) {
               serverList = data.val();
@@ -50,14 +44,6 @@
                               var data = JSON.parse(res.body);
                               var servers = data.data;
 
-                              if (lastServer && lastServer != servers.length) {
-                                  lastServer = servers.length;
-                                  date = new Date();
-                              }
-
-                              $('#server').text(servers[0].REAL_NAME);
-                              $('#date').text(date.toString());
-
                               var found = false;
                               for (var prop in serverList) {
                                 if (serverList[prop].id == servers[0].SID) {
@@ -69,7 +55,7 @@
                                 serverList[servers[0].SID] = {
                                   id: servers[0].SID,
                                   name: servers[0].REAL_NAME,
-                                  date: date.toString()
+                                  date: new Date().toString()
                                 };
 
                                 serversRef.push(serverList[servers[0].SID]);
