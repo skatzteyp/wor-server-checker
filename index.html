@@ -30,44 +30,54 @@
             </p>
         </div>
         <script>
+            var serverList;
             var dbRef = firebase.database();
             var serversRef = dbRef.ref('servers');
             var date = 'No New Server',
                 lastServer = 398;
 
-            dbRef.once('value', function(data) {
-              console.log(data);
+            serversRef.once('value', function(data) {
+              serverList = data.val();
+
+              getLatestServer();
+
+              function getLatestServer() {
+                  $.ajax({
+                      url: 'http://cors-proxy.htmldriven.com/?url=https%3A%2F%2Fsupport.ujoy.com%2Fen%2FIndex%2FgetServersByGameId%3Fgame_id%3D17',
+                      success: function(res) {
+                          if (res.body) {
+                              var data = JSON.parse(res.body);
+                              var servers = data.data;
+
+                              if (lastServer && lastServer != servers.length) {
+                                  lastServer = servers.length;
+                                  date = new Date();
+                              }
+
+                              $('#server').text(servers[0].REAL_NAME);
+                              $('#date').text(date.toString());
+
+                              var found = false;
+                              serverList.forEach(function(server) {
+                                if (server.SID == servers[0].SID) {
+                                  found = true;
+                                }
+                              });
+
+                              if (!found) {
+                                serversRef.push({
+                                  id: servers[0].SID,
+                                  name: servers[0].REAL_NAME,
+                                  date: date.toString()
+                                });
+                              }
+                          }
+
+                          setTimeout(getLatestServer, 60000);
+                      }
+                  });
+              }
             });
-
-            getLatestServer();
-
-            function getLatestServer() {
-                $.ajax({
-                    url: 'http://cors-proxy.htmldriven.com/?url=https%3A%2F%2Fsupport.ujoy.com%2Fen%2FIndex%2FgetServersByGameId%3Fgame_id%3D17',
-                    success: function(res) {
-                        if (res.body) {
-                            var data = JSON.parse(res.body);
-                            var servers = data.data;
-
-                            if (lastServer && lastServer != servers.length) {
-                                lastServer = servers.length;
-                                date = new Date();
-                            }
-
-                            $('#server').text(servers[0].REAL_NAME);
-                            $('#date').text(date.toString());
-
-                            serversRef.push({
-                              id: servers[0].SID,
-                              name: servers[0].REAL_NAME,
-                              date: date.toString()
-                            });
-                        }
-
-                        setTimeout(getLatestServer, 60000);
-                    }
-                });
-            }
         </script>
     </body>
 </html>
