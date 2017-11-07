@@ -30,8 +30,14 @@
             </p>
         </div>
         <script>
+            var dbRef = firebase.database();
+            var serversRef = dbRef.ref('servers');
             var date = 'No New Server',
                 lastServer = 398;
+
+            dbRef.once('value', function(data) {
+              console.log(data);
+            });
 
             getLatestServer();
 
@@ -51,10 +57,8 @@
                             $('#server').text(servers[0].REAL_NAME);
                             $('#date').text(date.toString());
 
-                            var dbRef = firebase.database();
-                            var serversRef = dbRef.ref('servers');
-
                             serversRef.push({
+                              id: servers[0].SID,
                               name: servers[0].REAL_NAME,
                               date: date.toString()
                             });
