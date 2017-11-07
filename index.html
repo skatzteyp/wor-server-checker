@@ -21,7 +21,7 @@
         </script>
     </head>
     <body>
-        <div>
+        <div id="list">
             <p>
             Latest Server: <span id="server"></span>
             </p>
@@ -38,6 +38,7 @@
 
             serversRef.once('value', function(data) {
               serverList = data.val();
+              listServers();
 
               getLatestServer();
 
@@ -72,12 +73,26 @@
                                 };
 
                                 serversRef.push(serverList[servers[0].SID]);
+                                listServers();
                               }
                           }
 
                           setTimeout(getLatestServer, 60000);
                       }
                   });
+              }
+
+              function listServers() {
+                var str = '';
+
+                for(var i in serverList) {
+                  var s = serverList[i];
+
+                  str += '<p>' + s.name + ' (' + s.date + ')</p>';
+                }
+
+                $('#list').empty();
+                $('#list').append(str);
               }
             });
         </script>
