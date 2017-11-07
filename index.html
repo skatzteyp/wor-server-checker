@@ -58,18 +58,20 @@
                               $('#date').text(date.toString());
 
                               var found = false;
-                              serverList.forEach(function(server) {
-                                if (server.SID == servers[0].SID) {
+                              for (var prop in serverList) {
+                                if (serverList[prop].id == servers[0].SID) {
                                   found = true;
                                 }
-                              });
+                              }
 
                               if (!found) {
-                                serversRef.push({
+                                serverList[servers[0].SID] = {
                                   id: servers[0].SID,
                                   name: servers[0].REAL_NAME,
                                   date: date.toString()
-                                });
+                                };
+
+                                serversRef.push(serverList[servers[0].SID]);
                               }
                           }
 
