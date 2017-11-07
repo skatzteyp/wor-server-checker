@@ -5,6 +5,20 @@
         <meta name="viewport" content="width=device-width" />
         <title>WoR Server Checker</title>
         <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+        <script src="https://www.gstatic.com/firebasejs/4.6.1/firebase.js"></script>
+        <script>
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyCbX9IbXUmuHG2m6OSb6iPz3ceayqEhAQ",
+            authDomain: "wor-server-checker.firebaseapp.com",
+            databaseURL: "https://wor-server-checker.firebaseio.com",
+            projectId: "wor-server-checker",
+            storageBucket: "wor-server-checker.appspot.com",
+            messagingSenderId: "918009053333"
+          };
+          firebase.initializeApp(config);
+        </script>
     </head>
     <body>
         <div>
@@ -36,6 +50,14 @@
 
                             $('#server').text(servers[0].REAL_NAME);
                             $('#date').text(date.toString());
+
+                            var dbRef = firebase.database();
+                            var serversRef = dbRef.ref('servers');
+
+                            serversRef.push({
+                              name: servers[0].REAL_NAME,
+                              date: date.toString()
+                            });
                         }
 
                         setTimeout(getLatestServer, 60000);
